@@ -1,10 +1,14 @@
 import { Body, Controller, Get, Param, Post } from "@nestjs/common"
-import { CreateCommentDto } from "@/posts/posts.dtos"
+import { CreateCommentDto } from "@/comments/presentation/dtos/create-comment.dto"
 import { CommentsService } from "@/comments/comments.service"
+import { CreateCommentUseCase } from "@/aplication/use-cases/create-comment.use-case"
 
 @Controller("api/posts/:id/comments")
 export class CommentsController {
-    constructor(private readonly commentsService: CommentsService) {}
+    constructor(
+        private readonly commentsService: CommentsService,
+        private readonly createCommentUseCase: CreateCommentUseCase,
+    ) {}
 
     @Get()
     list(@Param("id") postId: string) {
@@ -13,6 +17,6 @@ export class CommentsController {
 
     @Post()
     create(@Param("id") postId: string, @Body() body: CreateCommentDto) {
-        return this.commentsService.create(postId, body)
+        return this.createCommentUseCase.execute(postId, body.content)
     }
 }
